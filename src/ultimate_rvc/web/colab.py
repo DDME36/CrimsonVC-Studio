@@ -17,14 +17,14 @@ import gradio as gr
 from ultimate_rvc.common import AUDIO_DIR, MODELS_DIR, TEMP_DIR
 
 
-def _get_auth_credentials() -> tuple[str, str] | None:
+def _get_auth_credentials() -> list[tuple[str, str]] | None:
     """
     Get optional Gradio credentials from environment variables.
 
     Returns
     -------
-    tuple[str, str] or None
-        A username/password pair when authentication is configured,
+    list[tuple[str, str]] or None
+        A list of username/password pairs when authentication is configured,
         otherwise ``None``.
 
     Raises
@@ -43,7 +43,7 @@ def _get_auth_credentials() -> tuple[str, str] | None:
             "or both be omitted."
         )
         raise RuntimeError(msg)
-    return username, password
+    return [(username, password)]
 
 
 def main() -> None:
@@ -53,14 +53,13 @@ def main() -> None:
 
     print(f"Web UI rendered successfully ({len(app.blocks)} components).", flush=True)
     os.environ["GRADIO_TEMP_DIR"] = str(TEMP_DIR)
-    gr.set_static_paths([MODELS_DIR, AUDIO_DIR])
+    gr.set_static_paths([MODELS_DIR, AUDIO_DIR, TEMP_DIR])
     app.queue()
     print("Creating the temporary gradio.live tunnel...", flush=True)
     app.launch(
         share=True,
         server_name="0.0.0.0",  # noqa: S104
         auth=_get_auth_credentials(),
-        allowed_paths=[str(MODELS_DIR), str(AUDIO_DIR), str(TEMP_DIR)],
         debug=True,
         show_error=True,
     )
@@ -70,9 +69,8 @@ if __name__ == "__main__":
     try:
         main()
     except BaseException:  # noqa: BLE001
-        print(
-            "CrimsonVC Studio failed before the share URL became ready.",
-            file=sys.stderr,
-        )
+        sys.stderr.write("CrimsonVC Studio failed before the share URL became ready.\n")
         traceback.print_exc()
-        raise
+        sys.stderr.flush()
+        sys.stdout.flush()
+        sys.exit(1)
