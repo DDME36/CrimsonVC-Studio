@@ -100,6 +100,9 @@ cache-dir = "./uv/cache"
 compile-bytecode = true
 conflicts = [[{ extra = "cuda" }, { extra = "rocm" }]]
 
+[tool.uv.build-backend]
+module-name = "ultimate_rvc"
+
 [tool.uv.sources]
 torch = [
   { index = "torch-rocm", extra = "rocm" },

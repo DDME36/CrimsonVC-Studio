@@ -43,7 +43,7 @@ available first, while the original detailed controls remain under
 
 **Current release target: `0.1.0-alpha`**
 
-The CPU-safe local audit passes 286 tests, including notebook syntax, guided
+The CPU-safe local audit passes 288 tests, including notebook syntax, guided
 training presets, download behavior, and model-stack regression checks. A real
 GPU smoke test is still required after publishing:
 
