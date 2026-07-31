@@ -60,6 +60,7 @@ def main() -> None:
         share=True,
         server_name="0.0.0.0",  # noqa: S104
         auth=_get_auth_credentials(),
+        allowed_paths=[str(MODELS_DIR), str(AUDIO_DIR), str(TEMP_DIR)],
         debug=True,
         show_error=True,
     )

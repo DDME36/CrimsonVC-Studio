@@ -70,10 +70,8 @@ The primary notebook is
    only when models and outputs should persist between sessions.
 4. Select **Runtime > Run all**. Drive authorization appears only if you selected
    `google_drive`.
-5. Cell 6 asks for a Web UI password. Type at least eight characters into the
-   hidden input and press Enter.
-6. Wait for `Running on public URL`, open the `gradio.live` link, and sign in
-   with username `crimsonvc` and the password from step 5.
+5. Cell 6 launches the Web UI directly. (If you want password protection, enable `enable_authentication` in Cell 6).
+6. Wait for `Running on public URL` and open the `gradio.live` link to access CrimsonVC Studio.
 
 The first installation can take several minutes. The final launch cell keeps
 running while the UI is online; stop that cell to close the public URL.
