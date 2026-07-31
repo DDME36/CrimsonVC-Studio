@@ -57,6 +57,18 @@ class TestColabNotebook:
         assert "YOUR_USERNAME" not in source
         assert 'Path("/content/CrimsonVC")' in source
 
+    def test_runtime_only_storage_is_the_default(self) -> None:
+        """Test that inference does not require mounting Google Drive."""
+        notebook = _load_notebook()
+        storage_cell = next(
+            cell for cell in notebook["cells"] if cell["metadata"]["id"] == "storage"
+        )
+        source = "".join(storage_cell["source"])
+
+        assert 'storage_mode = "runtime_only"' in source
+        assert 'if storage_mode == "google_drive"' in source
+        assert 'Path("/content/CrimsonVC-data")' in source
+
     def test_install_uses_cuda_extra_and_lock_when_available(self) -> None:
         """Test that the install cell follows the project CUDA setup."""
         notebook = _load_notebook()

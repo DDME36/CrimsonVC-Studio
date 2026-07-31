@@ -66,9 +66,10 @@ The primary notebook is
 
 1. Open the Colab badge above.
 2. Select **Runtime > Change runtime type > T4 GPU**.
-3. For a quick disposable test, select `runtime_only` in cell 2. Keep
-   `google_drive` when models and outputs should persist between sessions.
-4. Select **Runtime > Run all** and approve Google Drive access if requested.
+3. Keep the default `runtime_only` mode for RVC Cover. Select `google_drive`
+   only when models and outputs should persist between sessions.
+4. Select **Runtime > Run all**. Drive authorization appears only if you selected
+   `google_drive`.
 5. Cell 6 asks for a Web UI password. Type at least eight characters into the
    hidden input and press Enter.
 6. Wait for `Running on public URL`, open the `gradio.live` link, and sign in
@@ -95,11 +96,12 @@ repository by default. You can still change `repository_url` to test a fork.
 
 | Mode | Persists after runtime deletion | Training speed | Best for |
 |---|---:|---:|---|
-| `google_drive` | Yes | Can be slower | Normal use and long training |
-| `runtime_only` | No | Usually faster | Testing and disposable runs |
+| `runtime_only` | No | Usually faster | RVC Cover and disposable sessions |
+| `google_drive` | Yes | Can be slower | Persistent models, outputs, and training |
 
-The Python environment and temporary files stay on Colab's faster ephemeral
-disk. Models, datasets, outputs, and saved UI configuration can be placed in
+Google Drive is optional. In the default `runtime_only` mode, the complete RVC
+Cover pipeline runs on Colab's local disk, but uploaded models and generated audio
+disappear when the runtime is deleted. Select `google_drive` to store them under
 `MyDrive/CrimsonVC`.
 
 Gradio share URLs are reachable from the internet. Authentication is enabled
