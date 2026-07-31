@@ -68,9 +68,8 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except BaseException:  # noqa: BLE001
-        sys.stderr.write("CrimsonVC Studio failed before the share URL became ready.\n")
-        traceback.print_exc()
-        sys.stderr.flush()
+    except BaseException as err:  # noqa: BLE001
+        print(f"CrimsonVC Studio failed to start: {err}", file=sys.stdout, flush=True)
+        traceback.print_exc(file=sys.stdout)
         sys.stdout.flush()
         sys.exit(1)
