@@ -65,8 +65,27 @@ The primary notebook is
 ### Run it
 
 1. Open the Colab badge above.
-2. Select a GPU runtime.
-3. Run the notebook from the first cell.
+2. Select **Runtime > Change runtime type > T4 GPU**.
+3. For a quick disposable test, select `runtime_only` in cell 2. Keep
+   `google_drive` when models and outputs should persist between sessions.
+4. Select **Runtime > Run all** and approve Google Drive access if requested.
+5. Cell 6 asks for a Web UI password. Type at least eight characters into the
+   hidden input and press Enter.
+6. Wait for `Running on public URL`, open the `gradio.live` link, and sign in
+   with username `crimsonvc` and the password from step 5.
+
+The first installation can take several minutes. The final launch cell keeps
+running while the UI is online; stop that cell to close the public URL.
+
+#### Use RVC without training
+
+1. Open **Models & Train > Upload > Voice models**.
+2. Upload the model `.pth` and its optional `.index`, enter a unique model name,
+   and click **Upload**.
+3. For an audio file or song, open **Create > Song cover > One-click**, choose
+   the local-file source, upload audio, select the voice model, and click
+   **Generate**.
+4. For text-to-speech followed by RVC, use **Create > Speech > One-click**.
 
 The notebook clones the official
 [`DDME36/CrimsonVC-Studio`](https://github.com/DDME36/CrimsonVC-Studio)
