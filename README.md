@@ -12,14 +12,13 @@ Gradio interface.
 [![Gradio](https://img.shields.io/badge/gradio-5.50.0-f97316)](https://www.gradio.app/)
 [![License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YOUR_USERNAME/crimson-vc/blob/main/CrimsonVC_Colab.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/DDME36/CrimsonVC-Studio/blob/main/CrimsonVC_Colab.ipynb)
 
 </div>
 
 > [!IMPORTANT]
-> Replace `YOUR_USERNAME` in this README and in `CrimsonVC_Colab.ipynb` after
-> publishing the repository under your GitHub account. The first public release
-> should be treated as an alpha until a fresh Colab T4 run completes end to end.
+> The first public release should be treated as an alpha until a fresh Colab T4
+> run completes end to end.
 
 ## What it does
 
@@ -63,19 +62,15 @@ Do not call the release stable until that checklist passes.
 The primary notebook is
 [`CrimsonVC_Colab.ipynb`](CrimsonVC_Colab.ipynb).
 
-### Publish it under your account
+### Run it
 
-1. Create a GitHub repository named `crimson-vc`.
-2. Upload this project to the repository.
-3. Replace `YOUR_USERNAME` in:
-   - this README's Colab badge;
-   - the `repository_url` field in `CrimsonVC_Colab.ipynb`.
-4. Commit the changes to the `main` branch.
-5. Open the Colab badge and run the notebook from the first cell.
+1. Open the Colab badge above.
+2. Select a GPU runtime.
+3. Run the notebook from the first cell.
 
-The notebook deliberately fails with a clear message while
-`YOUR_USERNAME` is still present, so it cannot silently clone the wrong
-project.
+The notebook clones the official
+[`DDME36/CrimsonVC-Studio`](https://github.com/DDME36/CrimsonVC-Studio)
+repository by default. You can still change `repository_url` to test a fork.
 
 ### Storage modes
 
@@ -219,11 +214,9 @@ pressure.
 
 ### Clone
 
-Replace `YOUR_USERNAME` after publishing:
-
 ```console
-git clone https://github.com/YOUR_USERNAME/crimson-vc.git
-cd crimson-vc
+git clone https://github.com/DDME36/CrimsonVC-Studio.git
+cd CrimsonVC-Studio
 ```
 
 ### Windows

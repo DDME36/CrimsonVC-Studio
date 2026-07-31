@@ -45,16 +45,16 @@ class TestColabNotebook:
                 source = "".join(cell["source"])
                 ast.parse(source, filename=f"{NOTEBOOK_PATH.name}:cell_{index}")
 
-    def test_repository_requires_the_publishers_url(self) -> None:
-        """Test that the notebook cannot silently clone the old repository."""
+    def test_repository_uses_the_published_url(self) -> None:
+        """Test that the notebook clones the published repository by default."""
         notebook = _load_notebook()
         repository_cell = next(
             cell for cell in notebook["cells"] if cell["metadata"]["id"] == "repository"
         )
         source = "".join(repository_cell["source"])
 
-        assert "YOUR_USERNAME/crimson-vc.git" in source
-        assert 'if "YOUR_USERNAME" in repository_url' in source
+        assert "https://github.com/DDME36/CrimsonVC-Studio.git" in source
+        assert "YOUR_USERNAME" not in source
         assert 'Path("/content/CrimsonVC")' in source
 
     def test_install_uses_cuda_extra_and_lock_when_available(self) -> None:
