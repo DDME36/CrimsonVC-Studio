@@ -1,0 +1,30 @@
+# Development-only files
+.pre-commit-config.yaml
+.markdownlint.json
+.yamlfmt.yaml
+.yamllint.yaml
+tests/
+scripts/
+urvc.ps1
+
+# Local data, caches, and generated output
+audio/
+models/
+config/
+temp/
+logs/
+.venv/
+uv/
+__pycache__/
+*.py[cod]
+*.log
+
+# Build and repository metadata
+build/
+dist/
+*.egg-info/
+.git/
+.gitignore
+.gitattributes
+.dockerignore
+docker/

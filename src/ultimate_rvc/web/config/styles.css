@@ -1,0 +1,208 @@
+:root {
+  --crimson-950: #20080d;
+  --crimson-900: #3b0a14;
+  --crimson-700: #9f1239;
+  --crimson-600: #be123c;
+  --crimson-500: #e11d48;
+  --crimson-400: #fb7185;
+  --crimson-surface: color-mix(in srgb, var(--background-fill-primary) 94%, #e11d48 6%);
+  --crimson-border: color-mix(in srgb, var(--border-color-primary) 75%, #fb7185 25%);
+}
+
+.gradio-container {
+  max-width: 1480px !important;
+  padding-bottom: 48px !important;
+}
+
+.crimson-hero {
+  position: relative;
+  overflow: hidden;
+  margin: 8px 0 16px;
+  padding: clamp(24px, 5vw, 52px);
+  border: 1px solid rgba(251, 113, 133, 0.28);
+  border-radius: 28px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(251, 113, 133, 0.35), transparent 32%),
+    radial-gradient(circle at 10% 90%, rgba(225, 29, 72, 0.28), transparent 35%),
+    linear-gradient(135deg, #20080d 0%, #4c0b1b 52%, #881337 100%);
+  box-shadow: 0 24px 70px rgba(76, 5, 25, 0.24);
+}
+
+.crimson-hero::after {
+  position: absolute;
+  right: -80px;
+  bottom: -120px;
+  width: 360px;
+  height: 360px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  content: "";
+}
+
+.crimson-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.crimson-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+}
+
+.crimson-logo-mark {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.crimson-release {
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  color: #ffe4e6;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.crimson-hero h1 {
+  max-width: 760px;
+  margin: 0 !important;
+  color: #fff;
+  font-size: clamp(2.15rem, 5vw, 4.35rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  text-align: left;
+}
+
+.crimson-hero p {
+  max-width: 720px;
+  margin: 22px 0 0;
+  color: #fecdd3;
+  font-size: clamp(1rem, 1.7vw, 1.18rem);
+  line-height: 1.65;
+}
+
+.crimson-workflows {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.crimson-workflow {
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+}
+
+.crimson-workflow strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.crimson-workflow span {
+  color: #fecdd3;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.crimson-runtime {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 18px;
+}
+
+.crimson-status-card {
+  padding: 13px 15px;
+  border: 1px solid var(--crimson-border);
+  border-radius: 14px;
+  background: var(--crimson-surface);
+}
+
+.crimson-status-card span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--body-text-color-subdued);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.crimson-status-card strong {
+  font-size: 0.92rem;
+}
+
+.quick-start-panel {
+  margin: 8px 0 18px;
+  padding: 18px !important;
+  border: 1px solid var(--crimson-border) !important;
+  border-radius: 18px !important;
+  background: var(--crimson-surface) !important;
+}
+
+.quick-start-panel h2 {
+  margin-top: 0 !important;
+}
+
+.training-steps {
+  margin: 10px 0 18px;
+  padding: 13px 16px;
+  border-left: 4px solid var(--crimson-500);
+  border-radius: 0 12px 12px 0;
+  background: var(--crimson-surface);
+}
+
+.dataset-health {
+  margin: 10px 0;
+  padding: 12px 15px;
+  border: 1px solid var(--crimson-border);
+  border-radius: 12px;
+}
+
+#generate-tab-button,
+#manage-tab-button,
+#audio-tab-button,
+#settings-tab-button {
+  font-weight: 700 !important;
+}
+
+button.primary {
+  box-shadow: 0 8px 22px rgba(190, 18, 60, 0.18);
+}
+
+@media (max-width: 760px) {
+  .gradio-container {
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+  }
+
+  .crimson-hero {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  .crimson-workflows,
+  .crimson-runtime {
+    grid-template-columns: 1fr;
+  }
+}
