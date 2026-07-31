@@ -106,4 +106,7 @@ class TestColabNotebook:
         assert "getpass" in source
         assert "URVC_AUTH_USERNAME" in source
         assert "URVC_AUTH_PASSWORD" in source
+        assert 'WORKSPACE / ".venv" / "bin" / "python"' in source
+        assert '"-u"' in source
+        assert '[uv, "run"' not in source
         assert "ultimate_rvc.web.colab" in source

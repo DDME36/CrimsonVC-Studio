@@ -9,11 +9,12 @@ link without putting credentials in process arguments.
 from __future__ import annotations
 
 import os
+import sys
+import traceback
 
 import gradio as gr
 
 from ultimate_rvc.common import AUDIO_DIR, MODELS_DIR, TEMP_DIR
-from ultimate_rvc.web.main import app
 
 
 def _get_auth_credentials() -> tuple[str, str] | None:
@@ -47,15 +48,30 @@ def _get_auth_credentials() -> tuple[str, str] | None:
 
 def main() -> None:
     """Launch the CrimsonVC Studio application for a Colab runtime."""
+    print(f"Loading CrimsonVC Studio with Gradio {gr.__version__}...", flush=True)
+    from ultimate_rvc.web.main import app  # noqa: PLC0415
+
+    print(f"Web UI rendered successfully ({len(app.blocks)} components).", flush=True)
     os.environ["GRADIO_TEMP_DIR"] = str(TEMP_DIR)
     gr.set_static_paths([MODELS_DIR, AUDIO_DIR])
     app.queue()
+    print("Creating the temporary gradio.live tunnel...", flush=True)
     app.launch(
         share=True,
-        server_name="127.0.0.1",
+        server_name="0.0.0.0",  # noqa: S104
         auth=_get_auth_credentials(),
+        debug=True,
+        show_error=True,
     )
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BaseException:  # noqa: BLE001
+        print(
+            "CrimsonVC Studio failed before the share URL became ready.",
+            file=sys.stderr,
+        )
+        traceback.print_exc()
+        raise
