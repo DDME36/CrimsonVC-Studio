@@ -60,7 +60,6 @@ def main() -> None:
         share=True,
         server_name="0.0.0.0",  # noqa: S104
         auth=_get_auth_credentials(),
-        debug=True,
         show_error=True,
     )
 
