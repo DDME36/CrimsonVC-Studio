@@ -58,6 +58,7 @@ def main() -> None:
     print("Creating the temporary gradio.live tunnel...", flush=True)
     app.launch(
         share=True,
+        inline=False,
         server_name="0.0.0.0",  # noqa: S104
         auth=_get_auth_credentials(),
         show_error=True,
