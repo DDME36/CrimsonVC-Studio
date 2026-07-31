@@ -11,7 +11,6 @@ from ultimate_rvc.rvc.lib.algorithm.generators.hifigan_mrf import HiFiGANMRFGene
 from ultimate_rvc.rvc.lib.algorithm.generators.hifigan_nsf import HiFiGANNSFGenerator
 from ultimate_rvc.rvc.lib.algorithm.generators.refinegan import RefineGANGenerator
 from ultimate_rvc.rvc.lib.algorithm.generators.ringformer import RingFormerGenerator
-from ultimate_rvc.rvc.lib.algorithm.generators.apex_gan import APEX_GAN_Generator
 from ultimate_rvc.rvc.lib.algorithm.residuals import ResidualCouplingBlock
 
 logger = logging.getLogger(__name__)
@@ -133,6 +132,9 @@ class Synthesizer(torch.nn.Module):
                     checkpointing=checkpointing,
                 )
             elif vocoder == "APEX-GAN":
+                from ultimate_rvc.rvc.lib.algorithm.generators.apex_gan import (  # noqa: PLC0415
+                    APEX_GAN_Generator,
+                )
                 self.dec = APEX_GAN_Generator(
                     initial_channel=inter_channels,
                     resblock_kernel_sizes=resblock_kernel_sizes,

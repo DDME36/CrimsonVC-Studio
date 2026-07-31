@@ -1,5 +1,7 @@
 """Tests for the Colab-first model stack configuration."""
 
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -60,3 +62,31 @@ def test_missing_asset_detection_does_not_depend_on_head_size(
 def test_disabled_pretrained_download_has_zero_size() -> None:
     """Disabling both model groups should not schedule hidden downloads."""
     assert prerequisites_download.calculate_total_size([], models=False) == 0
+
+
+def test_standard_synthesizer_import_does_not_require_triton() -> None:
+    """HiFi-GAN models must stay usable when optional Triton is unavailable."""
+    script = """
+import builtins
+
+original_import = builtins.__import__
+
+
+def import_without_triton(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == "triton" or name.startswith("triton."):
+        raise ModuleNotFoundError("No module named 'triton'")
+    return original_import(name, globals, locals, fromlist, level)
+
+
+builtins.__import__ = import_without_triton
+
+from ultimate_rvc.rvc.lib.algorithm.synthesizers import Synthesizer
+
+assert Synthesizer.__name__ == "Synthesizer"
+"""
+    subprocess.run(  # noqa: S603
+        [sys.executable, "-c", script],
+        check=True,
+        capture_output=True,
+        text=True,
+    )

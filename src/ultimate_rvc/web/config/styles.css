@@ -10,7 +10,9 @@
 }
 
 .gradio-container {
+  width: 100% !important;
   max-width: 1480px !important;
+  margin-inline: auto !important;
   padding-bottom: 48px !important;
 }
 

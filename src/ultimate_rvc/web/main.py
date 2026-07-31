@@ -293,6 +293,7 @@ def start_app(
         server_name=(None if not listen else (listen_host or "0.0.0.0")),  # noqa: S104
         server_port=listen_port,
         ssr_mode=ssr_mode,
+        show_error=True,
     )
 
 

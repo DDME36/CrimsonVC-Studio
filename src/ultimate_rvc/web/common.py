@@ -72,9 +72,17 @@ def exception_harness(  # noqa: UP047
             raise
         except NotProvidedError as e:
             msg = e.ui_msg or e
-            raise gr.Error(str(msg)) from None
+            raise gr.Error(
+                str(msg),
+                duration=None,
+                title="Input required",
+            ) from None
         except Exception as e:
-            raise gr.Error(str(e)) from e
+            raise gr.Error(
+                str(e),
+                duration=None,
+                title="Operation failed",
+            ) from e
         else:
             if info_msg:
                 gr.Success(info_msg, duration=1)
