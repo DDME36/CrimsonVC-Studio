@@ -22,6 +22,7 @@ from ultimate_rvc.branding import APP_NAME
 from ultimate_rvc.common import AUDIO_DIR, MODELS_DIR, TEMP_DIR
 from ultimate_rvc.core.generate.song_cover import get_named_song_dirs
 from ultimate_rvc.core.generate.speech import get_edge_tts_voice_names
+from ultimate_rvc.core.main import initialize
 from ultimate_rvc.core.manage.audio import (
     get_audio_datasets,
     get_named_audio_datasets,
@@ -58,6 +59,9 @@ from ultimate_rvc.web.tabs.manage.audio import render as render_audio_tab
 from ultimate_rvc.web.tabs.manage.models import render as render_models_tab
 from ultimate_rvc.web.tabs.manage.settings import render as render_settings_tab
 from ultimate_rvc.web.ui_mode import UIMode, resolve_ui_mode
+
+# Importing Web UI helpers must stay side-effect free; initialize only the app.
+initialize()
 
 config_name = os.environ.get("URVC_CONFIG")
 cookiefile = os.environ.get("YT_COOKIEFILE")

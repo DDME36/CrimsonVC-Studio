@@ -10,9 +10,5 @@ from __future__ import annotations
 import asyncio
 import os
 
-from ultimate_rvc.core.main import initialize
-
-initialize()
-
 if os.name == "nt":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
