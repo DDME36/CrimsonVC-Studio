@@ -112,6 +112,7 @@ class TestColabNotebook:
         assert 'WORKSPACE / ".venv" / "bin" / "python"' in source
         assert 'WORKSPACE / "src"' in source
         assert 'launch_env["PYTHONPATH"]' in source
+        assert 'launch_env["MPLBACKEND"] = "Agg"' in source
         assert '"-u"' in source
         assert '[uv, "run"' not in source
         assert "ultimate_rvc.web.colab" in source

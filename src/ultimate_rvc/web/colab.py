@@ -15,6 +15,16 @@ import traceback
 from pathlib import Path
 
 
+def _configure_headless_matplotlib() -> None:
+    """Use a backend available inside the isolated Colab environment.
+
+    Colab exports its notebook-only inline backend to child processes. The
+    project virtual environment intentionally does not depend on IPython's
+    ``matplotlib-inline`` package, so a Gradio server must use ``Agg`` instead.
+    """
+    os.environ["MPLBACKEND"] = "Agg"
+
+
 def _get_auth_credentials() -> list[tuple[str, str]] | None:
     """
     Get optional Gradio credentials from environment variables.
@@ -46,6 +56,8 @@ def _get_auth_credentials() -> list[tuple[str, str]] | None:
 
 def main() -> None:
     """Launch the CrimsonVC Studio application for a Colab runtime."""
+    _configure_headless_matplotlib()
+    print("Matplotlib backend: Agg (headless Gradio server)", flush=True)
     print(f"Python {platform.python_version()} at {sys.executable}", flush=True)
     print(f"Launcher source: {Path(__file__).resolve()}", flush=True)
     print("Importing Gradio...", flush=True)
