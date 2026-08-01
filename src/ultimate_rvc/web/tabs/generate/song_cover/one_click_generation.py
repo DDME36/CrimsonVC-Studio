@@ -39,6 +39,7 @@ def render(
     cookiefile: str | None = None,
     *,
     tab_label: str = "One-click",
+    include_library_updates: bool = True,
 ) -> None:
     """
     Render "Generate song covers - One-click generation" tab.
@@ -53,6 +54,8 @@ def render(
         audio from Youtube.
     tab_label : str, default="One-click"
         Label used when rendering this workflow as a Gradio tab.
+    include_library_updates : bool, default=True
+        Whether to synchronize omitted Multi-step and Audio Library controls.
 
     """
     with gr.Tab(tab_label):
@@ -73,8 +76,7 @@ def render(
             scale=3,
             waveform_options=gr.WaveformOptions(show_recording_waveform=False),
         )
-        song_dirs = total_config.song.multi_step.song_dirs.all
-        generate_btn.click(
+        generation_event = generate_btn.click(
             partial(
                 exception_harness(
                     run_pipeline,
@@ -116,20 +118,29 @@ def render(
             outputs=[song_cover, *tab_config.intermediate_audio.all],
             concurrency_limit=1,
             concurrency_id=ConcurrencyId.GPU,
-        ).success(
-            partial(update_dropdowns, get_named_song_dirs, 3 + len(song_dirs), [], [2]),
-            outputs=[
-                total_config.song.one_click.cached_song.instance,
-                total_config.song.multi_step.cached_song.instance,
-                total_config.management.audio.intermediate.instance,
-                *song_dirs,
-            ],
-            show_progress="hidden",
-        ).then(
-            partial(update_dropdowns, get_saved_output_audio, 1, [], [0]),
-            outputs=total_config.management.audio.output.instance,
-            show_progress="hidden",
         )
+        if include_library_updates:
+            song_dirs = total_config.song.multi_step.song_dirs.all
+            generation_event.success(
+                partial(
+                    update_dropdowns,
+                    get_named_song_dirs,
+                    3 + len(song_dirs),
+                    [],
+                    [2],
+                ),
+                outputs=[
+                    total_config.song.one_click.cached_song.instance,
+                    total_config.song.multi_step.cached_song.instance,
+                    total_config.management.audio.intermediate.instance,
+                    *song_dirs,
+                ],
+                show_progress="hidden",
+            ).then(
+                partial(update_dropdowns, get_saved_output_audio, 1, [], [0]),
+                outputs=total_config.management.audio.output.instance,
+                show_progress="hidden",
+            )
         reset_btn.click(
             lambda: [
                 tab_config.n_octaves.value,

@@ -128,9 +128,10 @@ def render_app(ui_mode: UIMode | str | None = None) -> gr.Blocks:
                 total_config,
                 cookiefile,
                 tab_label="AI Cover",
+                include_library_updates=False,
             )
             with gr.Tab("Voice Models", elem_id="manage-tab"):
-                render_models_tab(total_config, include_training=False)
+                render_models_tab(total_config, compact=True)
         else:
             with gr.Tab("Create", elem_id="generate-tab"):
                 with gr.Tab("Song cover"):
@@ -146,6 +147,21 @@ def render_app(ui_mode: UIMode | str | None = None) -> gr.Blocks:
             with gr.Tab("Settings", elem_id="settings-tab"):
                 render_settings_tab(total_config)
 
+        if mode is UIMode.COVER:
+            app.load(
+                _init_cover_dropdowns,
+                outputs=[
+                    total_config.song.one_click.voice_model.instance,
+                    total_config.management.model.voices.instance,
+                    total_config.song.one_click.custom_embedder_model.instance,
+                    total_config.management.model.embedders.instance,
+                    total_config.management.model.pretraineds.instance,
+                    total_config.management.model.traineds.instance,
+                    total_config.song.one_click.cached_song.instance,
+                ],
+                show_progress="hidden",
+            )
+            return app
         app.load(
             _init_dropdowns,
             outputs=[
@@ -186,6 +202,17 @@ def render_app(ui_mode: UIMode | str | None = None) -> gr.Blocks:
             show_progress="hidden",
         )
     return app
+
+
+def _init_cover_dropdowns() -> list[gr.Dropdown]:
+    """Initialize only dropdowns rendered by the compact AI Cover interface."""
+    return [
+        *initialize_dropdowns(get_voice_model_names, 2, value_indices=[0]),
+        *initialize_dropdowns(get_custom_embedder_model_names, 2, value_indices=[0]),
+        *initialize_dropdowns(get_custom_pretrained_model_names, 1),
+        *initialize_dropdowns(get_training_model_names, 1),
+        *initialize_dropdowns(get_named_song_dirs, 1, value_indices=[0]),
+    ]
 
 
 def _init_dropdowns() -> list[gr.Dropdown]:

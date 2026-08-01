@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import os
+import subprocess
+import sys
+
 import pytest
 
 from ultimate_rvc.web.ui_mode import UIMode, is_cover_mode, resolve_ui_mode
@@ -46,3 +50,33 @@ def test_cover_hero_describes_only_the_compact_workflow() -> None:
     assert "AI cover" in cover_hero
     assert "Train" not in cover_hero
     assert "convert speech" not in cover_hero
+
+
+def test_cover_events_only_target_browser_rendered_components() -> None:
+    """Lite event chains must not return updates for omitted Studio controls."""
+    environment = os.environ.copy()
+    environment.update({"MPLBACKEND": "Agg", "URVC_UI_MODE": "cover"})
+    script = """
+from ultimate_rvc.web.main import app
+
+config = app.get_config_file()
+rendered_ids = {component["id"] for component in config["components"]}
+invalid_outputs = [
+    (dependency.get("id"), output_id)
+    for dependency in config["dependencies"]
+    for output_id in dependency.get("outputs", [])
+    if output_id not in rendered_ids
+]
+print(f"invalid_outputs={invalid_outputs}")
+raise SystemExit(bool(invalid_outputs))
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        capture_output=True,
+        check=False,
+        env=environment,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "invalid_outputs=[]" in result.stdout

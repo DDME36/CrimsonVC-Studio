@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from ultimate_rvc.web.config.main import ModelManagementConfig, TotalConfig
 
 
-def render(total_config: TotalConfig, *, include_training: bool = True) -> None:
+def render(total_config: TotalConfig, *, compact: bool = False) -> None:
     """
 
     Render "Models" tab.
@@ -58,8 +58,8 @@ def render(total_config: TotalConfig, *, include_training: bool = True) -> None:
     total_config : TotalConfig
         Model containing all component configuration settings for the
         Ultimate RVC web UI.
-    include_training : bool, default=True
-        Whether to render the model-training workflow.
+    compact : bool, default=False
+        Whether to omit training and scope events to the AI Cover interface.
 
     """
     tab_config = total_config.management.model
@@ -68,7 +68,7 @@ def render(total_config: TotalConfig, *, include_training: bool = True) -> None:
 
     _render_download_tab(event_state)
     _render_upload_tab(event_state)
-    if include_training:
+    if not compact:
         from ultimate_rvc.web.tabs.train.multi_step_generation import (  # noqa: PLC0415
             render as render_train_multi_step_tab,
         )
@@ -77,16 +77,63 @@ def render(total_config: TotalConfig, *, include_training: bool = True) -> None:
             render_train_multi_step_tab(total_config)
     _render_delete_tab(tab_config, event_state)
 
+    voice_model_outputs = (
+        [
+            total_config.song.one_click.voice_model.instance,
+            tab_config.voices.instance,
+        ]
+        if compact
+        else [
+            total_config.song.one_click.voice_model.instance,
+            total_config.song.multi_step.voice_model.instance,
+            total_config.speech.one_click.voice_model.instance,
+            total_config.speech.multi_step.voice_model.instance,
+            tab_config.voices.instance,
+        ]
+    )
+    embedder_model_outputs = (
+        [
+            total_config.song.one_click.custom_embedder_model.instance,
+            tab_config.embedders.instance,
+        ]
+        if compact
+        else [
+            total_config.song.one_click.custom_embedder_model.instance,
+            total_config.song.multi_step.custom_embedder_model.instance,
+            total_config.speech.one_click.custom_embedder_model.instance,
+            total_config.speech.multi_step.custom_embedder_model.instance,
+            total_config.training.multi_step.custom_embedder_model.instance,
+            tab_config.embedders.instance,
+        ]
+    )
+    pretrained_model_outputs = (
+        [tab_config.pretraineds.instance]
+        if compact
+        else [
+            total_config.training.multi_step.custom_pretrained_model.instance,
+            tab_config.pretraineds.instance,
+        ]
+    )
+    training_model_outputs = (
+        [tab_config.traineds.instance]
+        if compact
+        else [
+            total_config.training.multi_step.preprocess_model.instance,
+            total_config.training.multi_step.extract_model.instance,
+            total_config.training.multi_step.train_model.instance,
+            tab_config.traineds.instance,
+        ]
+    )
     *_, all_model_update = [
         click_event.success(
-            partial(update_dropdowns, get_voice_model_names, 5, [], [4]),
-            outputs=[
-                total_config.song.one_click.voice_model.instance,
-                total_config.song.multi_step.voice_model.instance,
-                total_config.speech.one_click.voice_model.instance,
-                total_config.speech.multi_step.voice_model.instance,
-                tab_config.voices.instance,
-            ],
+            partial(
+                update_dropdowns,
+                get_voice_model_names,
+                len(voice_model_outputs),
+                [],
+                [len(voice_model_outputs) - 1],
+            ),
+            outputs=voice_model_outputs,
             show_progress="hidden",
         )
         for click_event in [
@@ -100,15 +147,14 @@ def render(total_config: TotalConfig, *, include_training: bool = True) -> None:
 
     *_, all_model_update = [
         click_event.success(
-            partial(update_dropdowns, get_custom_embedder_model_names, 6, [], [5]),
-            outputs=[
-                total_config.song.one_click.custom_embedder_model.instance,
-                total_config.song.multi_step.custom_embedder_model.instance,
-                total_config.speech.one_click.custom_embedder_model.instance,
-                total_config.speech.multi_step.custom_embedder_model.instance,
-                total_config.training.multi_step.custom_embedder_model.instance,
-                tab_config.embedders.instance,
-            ],
+            partial(
+                update_dropdowns,
+                get_custom_embedder_model_names,
+                len(embedder_model_outputs),
+                [],
+                [len(embedder_model_outputs) - 1],
+            ),
+            outputs=embedder_model_outputs,
             show_progress="hidden",
         )
         for click_event in [
@@ -121,11 +167,14 @@ def render(total_config: TotalConfig, *, include_training: bool = True) -> None:
 
     *_, all_model_update = [
         click_event.success(
-            partial(update_dropdowns, get_custom_pretrained_model_names, 2, [], [1]),
-            outputs=[
-                total_config.training.multi_step.custom_pretrained_model.instance,
-                tab_config.pretraineds.instance,
-            ],
+            partial(
+                update_dropdowns,
+                get_custom_pretrained_model_names,
+                len(pretrained_model_outputs),
+                [],
+                [len(pretrained_model_outputs) - 1],
+            ),
+            outputs=pretrained_model_outputs,
             show_progress="hidden",
         )
         for click_event in [
@@ -142,13 +191,18 @@ def render(total_config: TotalConfig, *, include_training: bool = True) -> None:
         all_model_update,
     ]:
         click_event.success(
-            partial(update_dropdowns, get_training_model_names, 4, [], [0, 3]),
-            outputs=[
-                total_config.training.multi_step.preprocess_model.instance,
-                total_config.training.multi_step.extract_model.instance,
-                total_config.training.multi_step.train_model.instance,
-                tab_config.traineds.instance,
-            ],
+            partial(
+                update_dropdowns,
+                get_training_model_names,
+                len(training_model_outputs),
+                [],
+                (
+                    [len(training_model_outputs) - 1]
+                    if compact
+                    else [0, len(training_model_outputs) - 1]
+                ),
+            ),
+            outputs=training_model_outputs,
             show_progress="hidden",
         )
 
