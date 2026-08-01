@@ -2,6 +2,7 @@
 
 import subprocess
 import sys
+from importlib.util import find_spec
 from pathlib import Path
 
 import pytest
@@ -66,6 +67,8 @@ def test_disabled_pretrained_download_has_zero_size() -> None:
 
 def test_standard_synthesizer_import_does_not_require_triton() -> None:
     """HiFi-GAN models must stay usable when optional Triton is unavailable."""
+    if find_spec("torch") is None:
+        pytest.skip("requires the RVC runtime dependencies")
     script = """
 import builtins
 

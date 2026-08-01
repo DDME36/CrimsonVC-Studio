@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+from importlib.util import find_spec
 
 import pytest
 
@@ -54,6 +55,8 @@ def test_cover_hero_describes_only_the_compact_workflow() -> None:
 
 def test_cover_events_only_target_browser_rendered_components() -> None:
     """Lite event chains must not return updates for omitted Studio controls."""
+    if find_spec("gradio") is None:
+        pytest.skip("requires the Web UI dependencies")
     environment = os.environ.copy()
     environment.update({"MPLBACKEND": "Agg", "URVC_UI_MODE": "cover"})
     script = """
