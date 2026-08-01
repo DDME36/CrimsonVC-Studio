@@ -43,15 +43,12 @@ from ultimate_rvc.web.common import (
     update_dropdowns,
 )
 from ultimate_rvc.web.config.event import ManageModelEventState
-from ultimate_rvc.web.tabs.train.multi_step_generation import (
-    render as _render_train_multi_step_tab,
-)
 
 if TYPE_CHECKING:
     from ultimate_rvc.web.config.main import ModelManagementConfig, TotalConfig
 
 
-def render(total_config: TotalConfig) -> None:
+def render(total_config: TotalConfig, *, include_training: bool = True) -> None:
     """
 
     Render "Models" tab.
@@ -61,6 +58,8 @@ def render(total_config: TotalConfig) -> None:
     total_config : TotalConfig
         Model containing all component configuration settings for the
         Ultimate RVC web UI.
+    include_training : bool, default=True
+        Whether to render the model-training workflow.
 
     """
     tab_config = total_config.management.model
@@ -69,8 +68,13 @@ def render(total_config: TotalConfig) -> None:
 
     _render_download_tab(event_state)
     _render_upload_tab(event_state)
-    with gr.Tab("Train", elem_id="train-tab"):
-        _render_train_multi_step_tab(total_config)
+    if include_training:
+        from ultimate_rvc.web.tabs.train.multi_step_generation import (  # noqa: PLC0415
+            render as render_train_multi_step_tab,
+        )
+
+        with gr.Tab("Train", elem_id="train-tab"):
+            render_train_multi_step_tab(total_config)
     _render_delete_tab(tab_config, event_state)
 
     *_, all_model_update = [

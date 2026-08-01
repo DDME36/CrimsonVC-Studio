@@ -10,11 +10,12 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parents[2]
 NOTEBOOK_PATH = PROJECT_ROOT / "CrimsonVC_Colab.ipynb"
+LITE_NOTEBOOK_PATH = PROJECT_ROOT / "CrimsonVC_RVC_Only.ipynb"
 
 
-def _load_notebook() -> dict[str, Any]:
-    """Load the primary Colab notebook as JSON."""
-    with NOTEBOOK_PATH.open(encoding="utf-8") as notebook_file:
+def _load_notebook(path: Path = NOTEBOOK_PATH) -> dict[str, Any]:
+    """Load a CrimsonVC Colab notebook as JSON."""
+    with path.open(encoding="utf-8") as notebook_file:
         return json.load(notebook_file)
 
 
@@ -116,3 +117,61 @@ class TestColabNotebook:
         assert '"-u"' in source
         assert '[uv, "run"' not in source
         assert "ultimate_rvc.web.colab" in source
+
+
+class TestCoverLiteNotebook:
+    """Test the compact RVC Cover notebook without requiring Colab or a GPU."""
+
+    def test_lite_notebook_structure_and_syntax(self) -> None:
+        """The Lite notebook should contain two clean, valid code cells."""
+        notebook = _load_notebook(LITE_NOTEBOOK_PATH)
+        cells = notebook["cells"]
+        cell_ids = [cell["metadata"]["id"] for cell in cells]
+
+        assert notebook["nbformat"] == 4
+        assert notebook["nbformat_minor"] == 5
+        assert len(cells) == 3
+        assert cell_ids == ["intro", "setup", "launch"]
+
+        for index, cell in enumerate(cells):
+            if cell["cell_type"] == "code":
+                assert cell["execution_count"] is None
+                assert cell["outputs"] == []
+                ast.parse(
+                    "".join(cell["source"]),
+                    filename=f"{LITE_NOTEBOOK_PATH.name}:cell_{index}",
+                )
+
+    def test_lite_setup_is_reproducible_and_runtime_only(self) -> None:
+        """Lite setup should use locked CUDA dependencies and ephemeral storage."""
+        notebook = _load_notebook(LITE_NOTEBOOK_PATH)
+        setup_cell = next(
+            cell for cell in notebook["cells"] if cell["metadata"]["id"] == "setup"
+        )
+        source = "".join(setup_cell["source"])
+
+        assert "https://github.com/DDME36/CrimsonVC-Studio.git" in source
+        assert 'Path("/content/CrimsonVC-Lite-data")' in source
+        assert "google.colab" not in source
+        assert "subprocess.Popen" in source
+        assert '"--extra"' in source
+        assert '"cuda"' in source
+        assert 'sync_command.append("--locked")' in source
+        assert '"URVC_DOWNLOAD_ALL_EMBEDDERS": "0"' in source
+        assert "ultimate_rvc.core.main" in source
+
+    def test_lite_launch_selects_cover_mode(self) -> None:
+        """Lite launch should use the source checkout and compact Web UI."""
+        notebook = _load_notebook(LITE_NOTEBOOK_PATH)
+        launch_cell = next(
+            cell for cell in notebook["cells"] if cell["metadata"]["id"] == "launch"
+        )
+        source = "".join(launch_cell["source"])
+
+        assert "enable_authentication = False" in source
+        assert 'launch_env["URVC_UI_MODE"] = "cover"' in source
+        assert 'launch_env["MPLBACKEND"] = "Agg"' in source
+        assert 'launch_env["PYTHONPATH"]' in source
+        assert "ultimate_rvc.web.colab" in source
+        assert "google.colab" not in source
+        assert "benchmark" not in source.lower()

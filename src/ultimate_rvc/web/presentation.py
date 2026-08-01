@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from html import escape
 import os
+from html import escape
 from pathlib import Path
 
 from ultimate_rvc.branding import APP_NAME, RELEASE_LABEL, TAGLINE
@@ -14,8 +14,41 @@ def load_app_styles() -> str:
     return (Path(__file__).parent / "config/styles.css").read_text(encoding="utf-8")
 
 
-def hero_html() -> str:
-    """Return the static product header."""
+def hero_html(*, cover_only: bool = False) -> str:
+    """Return the product header for either the full or compact workflow."""
+    if cover_only:
+        heading = "Make an AI cover.<br>Keep the performance."
+        description = (
+            "A focused RVC Cover workspace for loading a voice model, "
+            "converting a song, and downloading the result."
+        )
+        workflows = (
+            ("01 / Voice model", "Download or upload a compatible RVC model."),
+            ("02 / AI Cover", "Separate, convert, and mix the song in one click."),
+            ("03 / Export", "Preview the finished cover and download the audio."),
+        )
+    else:
+        heading = "Shape a voice.<br>Keep the performance."
+        description = (
+            f"{TAGLINE}. Create song covers, convert speech, and train a custom "
+            "voice model from one focused workspace."
+        )
+        workflows = (
+            (
+                "01 / Create",
+                "Generate a song cover or convert speech with a voice model.",
+            ),
+            ("02 / Train", "Start with a safe preset, then tune advanced controls."),
+            ("03 / Manage", "Keep models, datasets, and generated audio organized."),
+        )
+
+    workflow_html = "".join(
+        (
+            '<div class="crimson-workflow">'
+            f"<strong>{label}</strong><span>{summary}</span></div>"
+        )
+        for label, summary in workflows
+    )
     return f"""
     <section class="crimson-hero" aria-labelledby="crimson-title">
       <div class="crimson-brand-row">
@@ -25,22 +58,10 @@ def hero_html() -> str:
         </div>
         <span class="crimson-release">{RELEASE_LABEL}</span>
       </div>
-      <h1 id="crimson-title">Shape a voice.<br>Keep the performance.</h1>
-      <p>{TAGLINE}. Create song covers, convert speech, and train a custom
-      voice model from one focused workspace.</p>
+      <h1 id="crimson-title">{heading}</h1>
+      <p>{description}</p>
       <div class="crimson-workflows" aria-label="Primary workflows">
-        <div class="crimson-workflow">
-          <strong>01 / Create</strong>
-          <span>Generate a song cover or convert speech with a voice model.</span>
-        </div>
-        <div class="crimson-workflow">
-          <strong>02 / Train</strong>
-          <span>Start with a safe preset, then tune advanced controls if needed.</span>
-        </div>
-        <div class="crimson-workflow">
-          <strong>03 / Manage</strong>
-          <span>Keep models, datasets, and generated audio organized.</span>
-        </div>
+        {workflow_html}
       </div>
     </section>
     """

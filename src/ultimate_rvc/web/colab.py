@@ -56,6 +56,7 @@ def _get_auth_credentials() -> list[tuple[str, str]] | None:
 
 def main() -> None:
     """Launch the CrimsonVC Studio application for a Colab runtime."""
+    print(f"Web UI mode: {os.environ.get('URVC_UI_MODE', 'studio')}", flush=True)
     _configure_headless_matplotlib()
     print("Matplotlib backend: Agg (headless Gradio server)", flush=True)
     print(f"Python {platform.python_version()} at {sys.executable}", flush=True)

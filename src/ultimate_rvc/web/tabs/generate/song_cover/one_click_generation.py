@@ -34,7 +34,12 @@ if TYPE_CHECKING:
     from ultimate_rvc.web.config.main import OneClickSongGenerationConfig, TotalConfig
 
 
-def render(total_config: TotalConfig, cookiefile: str | None = None) -> None:
+def render(
+    total_config: TotalConfig,
+    cookiefile: str | None = None,
+    *,
+    tab_label: str = "One-click",
+) -> None:
     """
     Render "Generate song covers - One-click generation" tab.
 
@@ -46,9 +51,11 @@ def render(total_config: TotalConfig, cookiefile: str | None = None) -> None:
     cookiefile : str, optional
         The path to a file containing cookies to use when downloading
         audio from Youtube.
+    tab_label : str, default="One-click"
+        Label used when rendering this workflow as a Gradio tab.
 
     """
-    with gr.Tab("One-click"):
+    with gr.Tab(tab_label):
         tab_config = total_config.song.one_click
         _render_input(tab_config)
         with gr.Accordion("Options", open=False):

@@ -57,13 +57,14 @@ from ultimate_rvc.web.tabs.generate.speech.one_click_generation import (
 from ultimate_rvc.web.tabs.manage.audio import render as render_audio_tab
 from ultimate_rvc.web.tabs.manage.models import render as render_models_tab
 from ultimate_rvc.web.tabs.manage.settings import render as render_settings_tab
+from ultimate_rvc.web.ui_mode import UIMode, resolve_ui_mode
 
 config_name = os.environ.get("URVC_CONFIG")
 cookiefile = os.environ.get("YT_COOKIEFILE")
 total_config = load_config(config_name, TotalConfig) if config_name else TotalConfig()
 
 
-def render_app() -> gr.Blocks:
+def render_app(ui_mode: UIMode | str | None = None) -> gr.Blocks:
     """
     Render the CrimsonVC Studio web application.
 
@@ -73,6 +74,7 @@ def render_app() -> gr.Blocks:
         The rendered web application.
 
     """
+    mode = resolve_ui_mode(ui_mode)
     css = load_app_styles()
     cache_delete_frequency = 86400  # every 24 hours check for files to delete
     cache_delete_cutoff = 86400  # and delete files older than 24 hours
@@ -83,7 +85,7 @@ def render_app() -> gr.Blocks:
         css=css,
         delete_cache=(cache_delete_frequency, cache_delete_cutoff),
     ) as app:
-        gr.HTML(hero_html())
+        gr.HTML(hero_html(cover_only=mode is UIMode.COVER))
         gr.HTML(runtime_status_html())
         for component_config in [
             total_config.song.one_click.voice_model,
@@ -121,20 +123,28 @@ def render_app() -> gr.Blocks:
             total_config.management.settings.delete_config_names,
         ]:
             component_config.instantiate()
-        # main tab
-        with gr.Tab("Create", elem_id="generate-tab"):
-            with gr.Tab("Song cover"):
-                render_song_cover_one_click_tab(total_config, cookiefile)
-                render_song_cover_multi_step_tab(total_config, cookiefile)
-            with gr.Tab("Speech"):
-                render_speech_one_click_tab(total_config)
-                render_speech_multi_step_tab(total_config)
-        with gr.Tab("Models & Train", elem_id="manage-tab"):
-            render_models_tab(total_config)
-        with gr.Tab("Audio Library", elem_id="audio-tab"):
-            render_audio_tab(total_config)
-        with gr.Tab("Settings", elem_id="settings-tab"):
-            render_settings_tab(total_config)
+        if mode is UIMode.COVER:
+            render_song_cover_one_click_tab(
+                total_config,
+                cookiefile,
+                tab_label="AI Cover",
+            )
+            with gr.Tab("Voice Models", elem_id="manage-tab"):
+                render_models_tab(total_config, include_training=False)
+        else:
+            with gr.Tab("Create", elem_id="generate-tab"):
+                with gr.Tab("Song cover"):
+                    render_song_cover_one_click_tab(total_config, cookiefile)
+                    render_song_cover_multi_step_tab(total_config, cookiefile)
+                with gr.Tab("Speech"):
+                    render_speech_one_click_tab(total_config)
+                    render_speech_multi_step_tab(total_config)
+            with gr.Tab("Models & Train", elem_id="manage-tab"):
+                render_models_tab(total_config)
+            with gr.Tab("Audio Library", elem_id="audio-tab"):
+                render_audio_tab(total_config)
+            with gr.Tab("Settings", elem_id="settings-tab"):
+                render_settings_tab(total_config)
 
         app.load(
             _init_dropdowns,

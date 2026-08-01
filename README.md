@@ -12,7 +12,8 @@ Gradio interface.
 [![Gradio](https://img.shields.io/badge/gradio-5.50.0-f97316)](https://www.gradio.app/)
 [![License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/DDME36/CrimsonVC-Studio/blob/main/CrimsonVC_Colab.ipynb)
+[![Full Studio](https://img.shields.io/badge/Colab-Full_Studio-F9AB00?logo=googlecolab&logoColor=white)](https://colab.research.google.com/github/DDME36/CrimsonVC-Studio/blob/main/CrimsonVC_Colab.ipynb)
+[![Cover Lite](https://img.shields.io/badge/Colab-Cover_Lite-e11d48?logo=googlecolab&logoColor=white)](https://colab.research.google.com/github/DDME36/CrimsonVC-Studio/blob/main/CrimsonVC_RVC_Only.ipynb)
 
 </div>
 
@@ -43,13 +44,13 @@ available first, while the original detailed controls remain under
 
 **Current release target: `0.1.0-alpha`**
 
-The CPU-safe local audit passes 288 tests, including notebook syntax, guided
-training presets, download behavior, and model-stack regression checks. A real
-GPU smoke test is still required after publishing:
+The CPU-safe local audit passes more than 300 tests, including both notebook
+variants, guided training presets, download behavior, and model-stack regression
+checks. A real GPU generation smoke test is still required after publishing:
 
 1. Start a clean Colab runtime with a T4 or better NVIDIA GPU.
 2. Run every notebook cell without reusing an old workspace.
-3. Launch the authenticated Gradio URL.
+3. Launch the temporary Gradio URL, with optional authentication.
 4. Download or upload a test voice model.
 5. Generate a short output.
 6. Run a short Fast Draft training job and confirm that the model survives a
@@ -59,19 +60,34 @@ Do not call the release stable until that checklist passes.
 
 ## Google Colab quick start
 
-The primary notebook is
-[`CrimsonVC_Colab.ipynb`](CrimsonVC_Colab.ipynb).
+Choose the notebook that matches the job:
 
-### Run it
+| Notebook | Interface | Storage | Best for |
+|---|---|---|---|
+| [`CrimsonVC_RVC_Only.ipynb`](CrimsonVC_RVC_Only.ipynb) | AI Cover + Voice Models | Temporary runtime | Fast, focused RVC covers |
+| [`CrimsonVC_Colab.ipynb`](CrimsonVC_Colab.ipynb) | Full Studio | Runtime or Google Drive | Speech, training, persistence, benchmarks |
 
-1. Open the Colab badge above.
+### Cover Lite
+
+1. Open the **Cover Lite** badge above.
+2. Select **Runtime > Change runtime type > T4 GPU**.
+3. Select **Runtime > Run all** and wait for Cell 2.
+4. Open the `gradio.live` URL, add a voice model, and generate the cover.
+
+Cover Lite never mounts Google Drive and renders only the **AI Cover** and
+**Voice Models** tabs. Download generated audio before deleting the runtime.
+
+### Full Studio
+
+1. Open the **Full Studio** badge above.
 2. Select **Runtime > Change runtime type > T4 GPU**.
 3. Keep the default `runtime_only` mode for RVC Cover. Select `google_drive`
    only when models and outputs should persist between sessions.
 4. Select **Runtime > Run all**. Drive authorization appears only if you selected
    `google_drive`.
-5. Cell 6 launches the Web UI directly. (If you want password protection, enable `enable_authentication` in Cell 6).
-6. Wait for `Running on public URL` and open the `gradio.live` link to access CrimsonVC Studio.
+5. Cell 6 launches the Web UI. Enable `enable_authentication` only when password
+   protection is wanted.
+6. Wait for `Running on public URL` and open the `gradio.live` link.
 
 The first installation can take several minutes. The final launch cell keeps
 running while the UI is online; stop that cell to close the public URL.
@@ -102,8 +118,9 @@ Cover pipeline runs on Colab's local disk, but uploaded models and generated aud
 disappear when the runtime is deleted. Select `google_drive` to store them under
 `MyDrive/CrimsonVC`.
 
-Gradio share URLs are reachable from the internet. Authentication is enabled
-by default, but the URL is still intended for temporary personal sessions.
+Gradio share URLs are reachable from the internet. Authentication is disabled
+by default for one-click access and can be enabled in either launch cell. Treat
+every share URL as a temporary personal session.
 
 ## Guided model training
 
@@ -274,11 +291,13 @@ and scripts.
 | `URVC_AUTH_USERNAME` | Colab Gradio username | Not set |
 | `URVC_AUTH_PASSWORD` | Colab Gradio password | Not set |
 | `URVC_DOWNLOAD_ALL_EMBEDDERS` | Prefetch every optional HuBERT/Spin model (`1`) | `0` |
+| `URVC_UI_MODE` | `studio` for the full UI or `cover` for Cover Lite | `studio` |
 
 ## Repository layout
 
 ```text
 CrimsonVC_Colab.ipynb       Primary Google Colab launcher
+CrimsonVC_RVC_Only.ipynb   Two-step, runtime-only AI Cover launcher
 src/ultimate_rvc/           Compatible application package
   web/                      Gradio UI, guided training, and Colab launcher
   core/                     Application workflows
