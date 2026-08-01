@@ -56,6 +56,9 @@ class TestColabNotebook:
         assert "https://github.com/DDME36/CrimsonVC-Studio.git" in source
         assert "YOUR_USERNAME" not in source
         assert 'Path("/content/CrimsonVC")' in source
+        assert "subprocess.Popen" in source
+        assert "stdout=subprocess.PIPE" in source
+        assert "stderr=subprocess.STDOUT" in source
 
     def test_runtime_only_storage_is_the_default(self) -> None:
         """Test that inference does not require mounting Google Drive."""
@@ -107,6 +110,8 @@ class TestColabNotebook:
         assert "URVC_AUTH_USERNAME" in source
         assert "URVC_AUTH_PASSWORD" in source
         assert 'WORKSPACE / ".venv" / "bin" / "python"' in source
+        assert 'WORKSPACE / "src"' in source
+        assert 'launch_env["PYTHONPATH"]' in source
         assert '"-u"' in source
         assert '[uv, "run"' not in source
         assert "ultimate_rvc.web.colab" in source

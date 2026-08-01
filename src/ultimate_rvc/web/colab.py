@@ -9,12 +9,10 @@ link without putting credentials in process arguments.
 from __future__ import annotations
 
 import os
+import platform
 import sys
 import traceback
-
-import gradio as gr
-
-from ultimate_rvc.common import AUDIO_DIR, MODELS_DIR, TEMP_DIR
+from pathlib import Path
 
 
 def _get_auth_credentials() -> list[tuple[str, str]] | None:
@@ -48,7 +46,20 @@ def _get_auth_credentials() -> list[tuple[str, str]] | None:
 
 def main() -> None:
     """Launch the CrimsonVC Studio application for a Colab runtime."""
+    print(f"Python {platform.python_version()} at {sys.executable}", flush=True)
+    print(f"Launcher source: {Path(__file__).resolve()}", flush=True)
+    print("Importing Gradio...", flush=True)
+    import gradio as gr  # noqa: PLC0415
+
     print(f"Loading CrimsonVC Studio with Gradio {gr.__version__}...", flush=True)
+    print("Resolving CrimsonVC storage paths...", flush=True)
+    from ultimate_rvc.common import (  # noqa: PLC0415
+        AUDIO_DIR,
+        MODELS_DIR,
+        TEMP_DIR,
+    )
+
+    print("Rendering the Web UI...", flush=True)
     from ultimate_rvc.web.main import app  # noqa: PLC0415
 
     print(f"Web UI rendered successfully ({len(app.blocks)} components).", flush=True)
@@ -62,6 +73,7 @@ def main() -> None:
         server_name="0.0.0.0",  # noqa: S104
         auth=_get_auth_credentials(),
         show_error=True,
+        debug=True,
     )
 
 
